@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            HelloComposeForm()
+
+            HelloComposeForm2()
 
         }
     }
@@ -73,4 +74,67 @@ fun HelloComposeForm(){
         }
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HelloComposeForm2(){
+
+    var talla by remember { mutableStateOf("") }
+    var peso by remember { mutableStateOf("") }
+    var imc by remember { mutableStateOf("") }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("IMC") })
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .padding(paddingValues = padding)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+        ) {
+
+            Text("Bienvenidos al IMC")
+
+            OutlinedTextField(
+                value = talla,
+                onValueChange = { talla = it },
+                label = { Text("Talla (cm)") }
+            )
+
+            OutlinedTextField(
+                value = peso,
+                onValueChange = { peso = it },
+                label = { Text("Peso (kg)") }
+            )
+
+            Button(
+                onClick = {
+
+                    val tallaDouble = talla.toDoubleOrNull()
+                    val pesoDouble = peso.toDoubleOrNull()
+
+                    if (tallaDouble != null && pesoDouble != null && tallaDouble > 0) {
+
+                        val resultado = pesoDouble / (tallaDouble * tallaDouble)
+
+                        imc = String.format("%.2f", resultado)
+                    }
+                },
+                enabled = talla.isNotEmpty() && peso.isNotEmpty()
+            ) {
+                Text("Calcular")
+            }
+
+            if (imc.isNotEmpty()) {
+                Text(
+                    text = "Tu IMC es: $imc"
+                )
+            }
+        }
+    }
 }
